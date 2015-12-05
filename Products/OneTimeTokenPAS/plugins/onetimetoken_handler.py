@@ -17,6 +17,10 @@ from Products.PluggableAuthService.interfaces.plugins import \
 from Products.CMFPlone.utils import log
 from Products.OneTimeTokenPAS.config import *
 
+# 
+from plone.protect.interfaces import IDisableCSRFProtection
+from zope.interface import alsoProvides
+
 # This hacked PlonePAS collection of plugins was mostly ripped
 # from other plugins, especially from CookieAuthHelper
 
@@ -73,6 +77,7 @@ class OneTimeTokenPlugin(BasePlugin):
 
         """ Extract credentials from cookie or 'request'. """
         #log( 'extractCredentials')
+        alsoProvides(request, IDisableCSRFProtection)
 
         creds = {}
         session = request.SESSION
@@ -90,7 +95,6 @@ class OneTimeTokenPlugin(BasePlugin):
 
             if not loginCode:
                 return None # not authenticated
-
             try:
                 username = tokenTool.verifyToken(loginCode)
             except:
@@ -135,6 +139,7 @@ class OneTimeTokenPlugin(BasePlugin):
     security.declarePrivate('resetCredentials')
     def resetCredentials(self, request, response):
         """ Clears credentials"""
+        alsoProvides(request, IDisableCSRFProtection)
         session = self.REQUEST.SESSION
         session[self.session_var] = None
 

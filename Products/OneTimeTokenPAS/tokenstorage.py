@@ -28,7 +28,7 @@ class TokenStorage(UniqueObject, SimpleItem, persistent.Persistent):
 
     _timedelta = 504 # three weeks
 
-    def __init__(self):
+    def __init__(self, request):
         self._tokens = OOBTree()
 
     def getTokens(self):
@@ -42,7 +42,6 @@ class TokenStorage(UniqueObject, SimpleItem, persistent.Persistent):
         """
         token = ''
         m_tool = getToolByName(self, 'portal_membership')
-
         if not userId:
             if generate_username_callback:
                 userId = generate_username_callback(**(generate_username_kwargs or {}))
